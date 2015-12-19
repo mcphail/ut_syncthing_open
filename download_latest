@@ -7,11 +7,6 @@ import os
 import re
 from bs4 import BeautifulSoup
 
-def increment(matchobj):
-    number = int(matchobj.group('num'))
-    number = number + 1
-    return str(number)
-
 html = urllib2.urlopen('https://github.com/syncthing/syncthing/releases/latest', timeout=10)
 soup = BeautifulSoup(html, 'lxml')
 
