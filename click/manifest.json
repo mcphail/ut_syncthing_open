@@ -1,0 +1,15 @@
+{
+    "architecture": "armhf",
+    "description": "Syncthing client which runs in the background",
+    "framework": "ubuntu-sdk-15.04",
+    "hooks": {
+        "syncthing": {
+            "apparmor": "syncthing_back.apparmor",
+            "desktop": "syncthing_back.desktop"
+        }
+    },
+    "maintainer": "Neil McPhail <neil@themcphails.uk>",
+    "name": "syncthing.njmcphail",
+    "title": "syncthing",
+    "version": "0.5"
+}

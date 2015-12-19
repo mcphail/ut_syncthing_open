@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Syncthing
+Comment=Background Syncthing app
+Exec=run.sh
+Icon=st.png
+Terminal=false
+Type=Application
+X-Ubuntu-Touch=true

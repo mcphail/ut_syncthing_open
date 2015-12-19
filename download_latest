@@ -1,0 +1,60 @@
+#! /usr/bin/python
+
+import urllib2
+import tarfile
+import shutil
+import os
+import re
+from bs4 import BeautifulSoup
+
+def increment(matchobj):
+    number = int(matchobj.group('num'))
+    number = number + 1
+    return str(number)
+
+html = urllib2.urlopen('https://github.com/syncthing/syncthing/releases/latest', timeout=10)
+soup = BeautifulSoup(html, 'lxml')
+
+# Obtain new binary if newer version is available
+upstream_version = unicode(soup.find("h1", class_="release-title").a.string)
+version_file = open('version', 'r+')
+current_version = version_file.readline().strip()
+
+if upstream_version > current_version:
+    print "A newer binary is available and will be downloaded"
+    tarball_rel_url = ''
+    hashes_rel_url = ''
+    for anchor in soup.find_all('a'):
+        if 'linux-arm' in anchor.get('href'):
+            tarball_rel_url = anchor.get('href')
+        if 'sha256sum' in anchor.get('href'):
+            hashes_rel_url = anchor.get('href')
+    if (tarball_rel_url == '') or (hashes_rel_url == ''):
+        print "Could not find url for download"
+        exit()
+    tarball_full_url = 'https://github.com' + tarball_rel_url
+    hashes_full_url = 'https://github.com' + hashes_rel_url
+
+    tarball_remote = urllib2.urlopen(tarball_full_url, timeout=10)
+    tarball_path = 'click/source/' + tarball_full_url.split('/')[-1]
+    hashes_remote = urllib2.urlopen(hashes_full_url, timeout=10)
+    hashes_path = 'click/source/' + hashes_full_url.split('/')[-1]
+    shutil.rmtree('click/source', ignore_errors=1)
+    os.mkdir('click/source')
+
+    with open(tarball_path, 'w') as tp:
+        tp.write(tarball_remote.read())
+    with open(hashes_path, 'w') as hp:
+        hp.write(hashes_remote.read())
+
+    pkg_tarball = tarfile.open(tarball_path)
+    for name in pkg_tarball.getnames():
+        if re.match('.*syncthing$', name):
+            binary = pkg_tarball.extractfile(name)
+            with open('click/lib/arm-linux-gnueabihf/bin/syncthing', 'w') as binfile:
+                binfile.write(binary.read())
+
+    version_file.seek(0)
+    version_file.write(upstream_version)
+    version_file.truncate()
+version_file.close()

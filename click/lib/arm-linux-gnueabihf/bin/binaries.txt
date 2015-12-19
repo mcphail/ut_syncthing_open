@@ -1,0 +1,6 @@
+The syncthing binary will be added here by the download_latest script. The
+upstream tarball will be found in the source/ subdirectory of the root, along
+with a signed hash from the maintainers.
+
+As this is an unconfined application, no further binaries such as 'mkdir' or
+'sed' are needed in this directory.
