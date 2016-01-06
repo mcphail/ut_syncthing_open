@@ -20,7 +20,7 @@ if upstream_version > current_version:
     tarball_rel_url = ''
     hashes_rel_url = ''
     for anchor in soup.find_all('a'):
-        if 'linux-arm' in anchor.get('href'):
+        if 'linux-arm-' in anchor.get('href'):
             tarball_rel_url = anchor.get('href')
         if 'sha256sum' in anchor.get('href'):
             hashes_rel_url = anchor.get('href')
