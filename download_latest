@@ -4,6 +4,7 @@ import urllib2
 import tarfile
 import shutil
 import os
+import stat
 import re
 from bs4 import BeautifulSoup
 
@@ -48,6 +49,7 @@ if upstream_version > current_version:
             binary = pkg_tarball.extractfile(name)
             with open('click/lib/arm-linux-gnueabihf/bin/syncthing', 'w') as binfile:
                 binfile.write(binary.read())
+            os.chmod('click/lib/arm-linux-gnueabihf/bin/syncthing', stat.S_IRWXU)
 
     version_file.seek(0)
     version_file.write(upstream_version)
