@@ -13,6 +13,7 @@ soup = BeautifulSoup(html, 'lxml')
 
 # Obtain new binary if newer version is available
 upstream_version = unicode(soup.find("h1", class_="release-title").a.string)
+print upstream_version + " found"
 version_file = open('version', 'r+')
 current_version = version_file.readline().strip()
 
@@ -44,9 +45,9 @@ if upstream_version > current_version:
         hp.write(hashes_remote.read())
 
     pkg_tarball = tarfile.open(tarball_path)
-    for name in pkg_tarball.getnames():
-        if re.match('.*syncthing$', name):
-            binary = pkg_tarball.extractfile(name)
+    for member in pkg_tarball.getmembers():
+        if (re.match('.*syncthing$', member.name) and (member.size > 4096)):
+            binary = pkg_tarball.extractfile(member)
             with open('click/lib/arm-linux-gnueabihf/bin/syncthing', 'w') as binfile:
                 binfile.write(binary.read())
             os.chmod('click/lib/arm-linux-gnueabihf/bin/syncthing', stat.S_IRWXU)
